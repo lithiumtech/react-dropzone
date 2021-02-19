@@ -417,7 +417,7 @@ export function useDropzone(options = {}) {
   const inputRef = useRef(null)
 
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { isFocused, isFileDialogActive, draggedFiles } = state
+  const { isDragActive, isFocused, isFileDialogActive, draggedFiles } = state
 
   // Fn for opening the file dialog programmatically
   const openFileDialog = useCallback(() => {
@@ -527,7 +527,7 @@ export function useDropzone(options = {}) {
 
       dragTargetsRef.current = [...dragTargetsRef.current, event.target]
 
-      if (isEvtWithFiles(event)) {
+      if (!isDragActive && isEvtWithFiles(event)) {
         Promise.resolve(getFilesFromEvent(event)).then(draggedFiles => {
           if (isPropagationStopped(event) && !noDragEventsBubbling) {
             return
@@ -545,7 +545,7 @@ export function useDropzone(options = {}) {
         })
       }
     },
-    [getFilesFromEvent, onDragEnter, noDragEventsBubbling]
+    [isDragActive, getFilesFromEvent, onDragEnter, noDragEventsBubbling]
   )
 
   const onDragOverCb = useCallback(
